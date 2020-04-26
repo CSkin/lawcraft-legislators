@@ -1,16 +1,22 @@
 // ------------------------{  Data Preparation  }------------------------
 
-var appData = [
+var legislatorData = [
   [0, 0, 2, 0, 0, 0],
   [0, 0, 0, 3, 0, 0],
   [0, 0, 0, 0, 0, 0]
-]
+];
+
+var inputData = [
+  [false, false, false, false, false, false],
+  [false, false, false, false, false, false],
+  [false, false, false, false, false, false]
+];
 
 $( document ).ready( function () {
 
 // -------------------------{  Vue Components  }-------------------------
 
-var RowLabel = {
+var DisplayLabel = {
   template:`
     <div class='label'>
       <span>{{ labelText }}</span>
@@ -31,7 +37,7 @@ var RowLabel = {
   }
 }
 
-var SectionSeat = {
+var DisplaySeat = {
   template:`
     <div class='seat'>
       <span :class='{ green: occupied }'>{{ occupied }}</span>
@@ -40,14 +46,14 @@ var SectionSeat = {
   props: ['occupied']
 }
 
-var RowSection = {
+var DisplaySection = {
   template:`
     <div class='section'>
-      <section-seat
+      <display-seat
         v-for='(item, index) in seatsArray'
         :occupied='item'
         :key='index'
-      ></section-seat>
+      ></display-seat>
     </div>
   `,
   props: ['sectionIndex', 'legislators'],
@@ -70,27 +76,77 @@ var RowSection = {
     }
   },
   components: {
-    'section-seat': SectionSeat
+    'display-seat': DisplaySeat
   }
 }
 
 var DisplayRow = {
   template: `
     <div class='row'>
-      <row-label :row-index='rowIndex' :label-index='0'></row-label>
-      <row-section
+      <display-label :row-index='rowIndex' :label-index='0'></display-label>
+      <display-section
         v-for='(item, index) in rowArray'
         :section-index='index'
         :legislators='item'
         :key='index'
-      ></row-section>
-      <row-label :row-index='rowIndex' :label-index='1'></row-label>
+      ></display-section>
+      <display-label :row-index='rowIndex' :label-index='1'></display-label>
     </div>
   `,
   props: ['rowIndex', 'rowArray'],
   components: {
-    'row-label': RowLabel,
-    'row-section': RowSection
+    'display-label': DisplayLabel,
+    'display-section': DisplaySection
+  }
+}
+
+var InputSection = {
+  template:`
+    <div class='section'>
+      <input
+        class='number-field'
+        type='number'
+        min='0'
+        max='4'
+        :value='legislators'
+      ></input>
+      <img
+        src='unlocked.svg'
+        alt='Unlocked'
+        class='icon'
+      >
+    </div>
+  `,
+  props: ['sectionIndex', 'legislators', 'locked'],
+  computed: {
+    imgSrc: function () {
+      return this.locked ? 'locked.svg' : 'unlocked.svg'
+    },
+    imgAlt: function () {
+      return this.locked ? 'Locked' : 'Unlocked'
+    }
+  },
+  methods: {
+    method: function () {
+
+    }
+  }
+}
+
+var InputRow = {
+  template:`
+    <div class='row'>
+      <input-section
+        v-for='(item, index) in rowArray'
+        :section-index='index'
+        :legislators='item'
+        :key='index'
+      ></input-section>
+    </div>
+  `,
+  props: ['rowIndex', 'rowArray'],
+  components: {
+    'input-section': InputSection
   }
 }
 
@@ -99,7 +155,8 @@ var DisplayRow = {
 var App = new Vue ({
   el: '#app',
   data: {
-    data: appData
+    legislatorData: legislatorData,
+    inputData: inputData
   },
   computed: {
     prop: function () {
@@ -112,10 +169,10 @@ var App = new Vue ({
     }
   },
   components: {
-    'display-row': DisplayRow
-    // 'input-row': InputRow,
+    'display-row': DisplayRow,
+    'input-row': InputRow
     // 'output-data': OutputData
   }
 });
 
-}); //end of document ready function
+}); // end of document ready function

@@ -29,6 +29,11 @@ div {
   flex-direction: row;
 }
 
+#input > .row, #input > .section {
+  align-items: center;
+  justify-content: center;
+}
+
 .label {
   display: flex;
   width: 100px;
