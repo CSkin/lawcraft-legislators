@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <title>LawCraft Legislators</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.js"></script>
+    <script src='https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.js'></script>
+    <script src='script.js'></script>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <main id='app' v-cloak>
+      <div id='display' class='panel'>
+        <display-row
+          v-for='(array, index) in data'
+          :row-index='index'
+          :row-array='array'
+          :key='index'
+        ></display-row>
+      </div>
+      <div id='input' class='panel'>
+        Input
+      </div>
+      <div id='output' class='panel'>
+        Output
+      </div>
+    </main>
+  </body>
+</html>
