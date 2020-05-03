@@ -1,18 +1,26 @@
+// -------------------------{  Custom Methods  }-------------------------
+
+Array.prototype.random = function() {
+  return this[Math.floor(Math.random() * this.length)];
+}
+
 // ------------------------{  Data Preparation  }------------------------
 
 const appData = [];
 
 class Section {
-  constructor(legislators, isUnlocked) {
+  constructor(row, section, legislators, isUnlocked) {
+    this.row = row;
+    this.section = section;
     this.legislators = legislators;
     this.isUnlocked = isUnlocked;
   }
 }
 
-for (let m = 3; m > 0; m--) {
+for (let r = 0; r < 3; r++) {
   var row = [];
-  for (let n = 6; n > 0; n--) {
-    row.push(new Section(0, true));
+  for (let s = 0; s < 6; s++) {
+    row.push(new Section(r, s, 0, true));
   }
   appData.push(row);
 }
@@ -90,10 +98,10 @@ var DisplayRow = {
     <div class='row'>
       <display-label :row='row' :label-index='0'></display-label>
       <display-section
-        v-for='(section, index) in rowData'
-        :section='index'
+        v-for='section in rowData'
+        :section='section.section'
         :legislators='section.legislators'
-        :key='index'
+        :key='section.section'
       ></display-section>
       <display-label :row='row' :label-index='1'></display-label>
     </div>
@@ -129,14 +137,10 @@ var InputSection = {
   },
   methods: {
     updateLegislators: function (value) {
-      var appData = App.appData;
-      appData[this.row][this.section].legislators = Number(value);
-      App.appData = appData;
+      App.appData[this.row][this.section].legislators = Number(value);
     },
     updateLock: function (checked) {
-      var appData = App.appData;
-      appData[this.row][this.section].isUnlocked = checked;
-      App.appData = appData;
+      App.appData[this.row][this.section].isUnlocked = checked;
     }
   }
 }
@@ -145,12 +149,12 @@ var InputRow = {
   template:`
     <div class='row'>
       <input-section
-        v-for='(section, index) in rowData'
-        :row='row'
-        :section='index'
+        v-for='section in rowData'
+        :row='section.row'
+        :section='section.section'
         :legislators='section.legislators'
         :isUnlocked='section.isUnlocked'
-        :key='index'
+        :key='section.section'
       ></input-section>
     </div>
   `,
@@ -169,13 +173,33 @@ var App = new Vue ({
     chamberSize: 25
   },
   computed: {
-    prop: function () {
-
+    legislatorsLocked: function () {
+      return this.appData
+        .flat()
+        .filter(section => !section.isUnlocked)
+        .reduce((acc, cur) => acc + cur.legislators, 0);
     }
   },
   methods: {
     generateLegislators: function () {
-      console.log('generating!');
+      // Wipe unlocked sections
+      this.appData.flat().forEach( function (s) {
+        if (s.isUnlocked && s.legislators > 0) {
+          App.appData[s.row][s.section].legislators = 0;
+        }
+      });
+      // Calculate # legislators to add
+      var toAdd = added = this.chamberSize - this.legislatorsLocked;
+      // Add legislators
+      while (toAdd > 0) {
+        var eligibleSections = App.appData
+          .flat()
+          .filter(s => s.isUnlocked && s.legislators < 4);
+        var random = eligibleSections.random();
+        App.appData[random.row][random.section].legislators++;
+        toAdd--;
+      }
+      console.log("Generated " + added + " legislators.");
     }
   },
   components: {

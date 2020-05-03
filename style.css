@@ -15,6 +15,10 @@ div {
   border: solid 1px;
 }
 
+input[type='number'] {
+  font-size: 16px;
+}
+
 [v-cloak] {
   display: none;
 }
