@@ -173,9 +173,11 @@ var App = new Vue ({
     chamberSize: 25
   },
   computed: {
+    flatData: function () {
+      return this.appData.flat();
+    },
     legislatorsLocked: function () {
-      return this.appData
-        .flat()
+      return this.flatData
         .filter(section => !section.isUnlocked)
         .reduce((acc, cur) => acc + cur.legislators, 0);
     }
@@ -183,7 +185,7 @@ var App = new Vue ({
   methods: {
     generateLegislators: function () {
       // Wipe unlocked sections
-      this.appData.flat().forEach( function (s) {
+      this.flatData.forEach( function (s) {
         if (s.isUnlocked && s.legislators > 0) {
           App.appData[s.row][s.section].legislators = 0;
         }
@@ -192,8 +194,7 @@ var App = new Vue ({
       var toAdd = added = this.chamberSize - this.legislatorsLocked;
       // Add legislators
       while (toAdd > 0) {
-        var eligibleSections = App.appData
-          .flat()
+        var eligibleSections = App.flatData
           .filter(s => s.isUnlocked && s.legislators < 4);
         var random = eligibleSections.random();
         App.appData[random.row][random.section].legislators++;

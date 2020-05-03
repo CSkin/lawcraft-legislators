@@ -26,16 +26,22 @@
           :key='index'
         ></input-row>
         <div id='generation-controls' class='row'>
-          <div>
+          <p>
             <label>Chamber Size:</label>
             <input type='number' v-model='chamberSize'></input>
-          </div>
+          </p>
           <p>Legislators Locked: {{ legislatorsLocked }}</p>
-          <button @click='generateLegislators'>Generate</button>
+          <p>
+            <button @click='generateLegislators'>Generate</button>
+          </p>
         </div>
       </div>
       <div id='output' class='panel'>
-        Output
+        <table>
+          <td v-for='(section, index) in flatData' :key='index'>
+            {{ section.legislators }}
+          </td>
+        </table>
       </div>
     </main>
   </body>
