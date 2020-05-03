@@ -1,16 +1,21 @@
 // ------------------------{  Data Preparation  }------------------------
 
-var legisData = [
-  [0, 0, 2, 0, 0, 0],
-  [0, 0, 0, 3, 0, 0],
-  [0, 0, 0, 0, 0, 0]
-];
+const appData = [];
 
-var inputData = [
-  [true, true, true, true, true, true],
-  [true, true, true, true, true, true],
-  [true, true, true, true, true, true]
-];
+class Section {
+  constructor(legislators, isUnlocked) {
+    this.legislators = legislators;
+    this.isUnlocked = isUnlocked;
+  }
+}
+
+for (let m = 3; m > 0; m--) {
+  var row = [];
+  for (let n = 6; n > 0; n--) {
+    row.push(new Section(0, true));
+  }
+  appData.push(row);
+}
 
 $( document ).ready( function () {
 
@@ -29,10 +34,10 @@ var DisplayLabel = {
       ['Equality', 'Liberty']
     ]};
   },
-  props: ['rowIndex', 'labelIndex'],
+  props: ['row', 'labelIndex'],
   computed: {
     labelText: function () {
-      return this.values[this.rowIndex][this.labelIndex];
+      return this.values[this.row][this.labelIndex];
     }
   }
 }
@@ -50,13 +55,13 @@ var DisplaySection = {
   template:`
     <div class='section'>
       <display-seat
-        v-for='(item, index) in seatsArray'
-        :occupied='item'
-        :key='String(index) + item'
+        v-for='(seat, index) in seatsArray'
+        :occupied='seat'
+        :key='index'
       ></display-seat>
     </div>
   `,
-  props: ['sectionIndex', 'legislators'],
+  props: ['section', 'legislators'],
   computed: {
     seatsArray: function () {
       let seatsArray = [false, false, false, false];
@@ -83,17 +88,17 @@ var DisplaySection = {
 var DisplayRow = {
   template: `
     <div class='row'>
-      <display-label :row-index='rowIndex' :label-index='0'></display-label>
+      <display-label :row='row' :label-index='0'></display-label>
       <display-section
-        v-for='(item, index) in legisArray'
-        :section-index='index'
-        :legislators='item'
-        :key='String(index) + item'
+        v-for='(section, index) in rowData'
+        :section='index'
+        :legislators='section.legislators'
+        :key='index'
       ></display-section>
-      <display-label :row-index='rowIndex' :label-index='1'></display-label>
+      <display-label :row='row' :label-index='1'></display-label>
     </div>
   `,
-  props: ['rowIndex', 'legisArray'],
+  props: ['row', 'rowData'],
   components: {
     'display-label': DisplayLabel,
     'display-section': DisplaySection
@@ -109,31 +114,30 @@ var InputSection = {
         min='0'
         max='4'
         :value='legislators'
-        :disabled='!unlocked'
-        :key='String(rowIndex) + sectionIndex + unlocked'
+        :disabled='!isUnlocked'
         @change='updateLegislators($event.target.value)'
       ></input>
       <input
         type='checkbox'
-        :checked='unlocked'
+        :checked='isUnlocked'
         @change='updateLock($event.target.checked)'
       >
     </div>
   `,
-  props: ['rowIndex', 'sectionIndex', 'legislators', 'unlocked'],
+  props: ['row', 'section', 'legislators', 'isUnlocked'],
   computed: {
 
   },
   methods: {
     updateLegislators: function (value) {
-      let array = App.legisData[this.rowIndex];
-      array[this.sectionIndex] = Number(value);
-      App.$set(App.legisData, this.rowIndex, array);
+      var appData = App.appData;
+      appData[this.row][this.section].legislators = Number(value);
+      App.appData = appData;
     },
     updateLock: function (checked) {
-      let array = App.inputData[this.rowIndex];
-      array[this.sectionIndex] = checked;
-      App.$set(App.inputData, this.rowIndex, array);
+      var appData = App.appData;
+      appData[this.row][this.section].isUnlocked = checked;
+      App.appData = appData;
     }
   }
 }
@@ -142,16 +146,16 @@ var InputRow = {
   template:`
     <div class='row'>
       <input-section
-        v-for='(item, index) in legisArray'
-        :row-index='rowIndex'
-        :section-index='index'
-        :legislators='item'
-        :unlocked='inputArray[index]'
-        :key='String(index) + item'
+        v-for='(section, index) in rowData'
+        :row='row'
+        :section='index'
+        :legislators='section.legislators'
+        :isUnlocked='section.isUnlocked'
+        :key='index'
       ></input-section>
     </div>
   `,
-  props: ['rowIndex', 'legisArray', 'inputArray'],
+  props: ['row', 'rowData'],
   components: {
     'input-section': InputSection
   }
@@ -162,8 +166,7 @@ var InputRow = {
 var App = new Vue ({
   el: '#app',
   data: {
-    legisData: legisData,
-    inputData: inputData
+    appData: appData
   },
   computed: {
     prop: function () {
