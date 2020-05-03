@@ -1,15 +1,15 @@
 // ------------------------{  Data Preparation  }------------------------
 
-var legislatorData = [
+var legisData = [
   [0, 0, 2, 0, 0, 0],
   [0, 0, 0, 3, 0, 0],
   [0, 0, 0, 0, 0, 0]
 ];
 
 var inputData = [
-  [false, false, false, false, false, false],
-  [false, false, false, false, false, false],
-  [false, false, false, false, false, false]
+  [true, true, true, true, true, true],
+  [true, true, true, true, true, true],
+  [true, true, true, true, true, true]
 ];
 
 $( document ).ready( function () {
@@ -52,7 +52,7 @@ var DisplaySection = {
       <display-seat
         v-for='(item, index) in seatsArray'
         :occupied='item'
-        :key='index'
+        :key='String(index) + item'
       ></display-seat>
     </div>
   `,
@@ -85,15 +85,15 @@ var DisplayRow = {
     <div class='row'>
       <display-label :row-index='rowIndex' :label-index='0'></display-label>
       <display-section
-        v-for='(item, index) in rowArray'
+        v-for='(item, index) in legisArray'
         :section-index='index'
         :legislators='item'
-        :key='index'
+        :key='String(index) + item'
       ></display-section>
       <display-label :row-index='rowIndex' :label-index='1'></display-label>
     </div>
   `,
-  props: ['rowIndex', 'rowArray'],
+  props: ['rowIndex', 'legisArray'],
   components: {
     'display-label': DisplayLabel,
     'display-section': DisplaySection
@@ -109,26 +109,31 @@ var InputSection = {
         min='0'
         max='4'
         :value='legislators'
+        :disabled='!unlocked'
+        :key='String(rowIndex) + sectionIndex + unlocked'
+        @change='updateLegislators($event.target.value)'
       ></input>
-      <img
-        src='unlocked.svg'
-        alt='Unlocked'
-        class='icon'
+      <input
+        type='checkbox'
+        :checked='unlocked'
+        @change='updateLock($event.target.checked)'
       >
     </div>
   `,
-  props: ['sectionIndex', 'legislators', 'locked'],
+  props: ['rowIndex', 'sectionIndex', 'legislators', 'unlocked'],
   computed: {
-    imgSrc: function () {
-      return this.locked ? 'locked.svg' : 'unlocked.svg'
-    },
-    imgAlt: function () {
-      return this.locked ? 'Locked' : 'Unlocked'
-    }
+
   },
   methods: {
-    method: function () {
-
+    updateLegislators: function (value) {
+      let array = App.legisData[this.rowIndex];
+      array[this.sectionIndex] = Number(value);
+      App.$set(App.legisData, this.rowIndex, array);
+    },
+    updateLock: function (checked) {
+      let array = App.inputData[this.rowIndex];
+      array[this.sectionIndex] = checked;
+      App.$set(App.inputData, this.rowIndex, array);
     }
   }
 }
@@ -137,14 +142,16 @@ var InputRow = {
   template:`
     <div class='row'>
       <input-section
-        v-for='(item, index) in rowArray'
+        v-for='(item, index) in legisArray'
+        :row-index='rowIndex'
         :section-index='index'
         :legislators='item'
-        :key='index'
+        :unlocked='inputArray[index]'
+        :key='String(index) + item'
       ></input-section>
     </div>
   `,
-  props: ['rowIndex', 'rowArray'],
+  props: ['rowIndex', 'legisArray', 'inputArray'],
   components: {
     'input-section': InputSection
   }
@@ -155,7 +162,7 @@ var InputRow = {
 var App = new Vue ({
   el: '#app',
   data: {
-    legislatorData: legislatorData,
+    legisData: legisData,
     inputData: inputData
   },
   computed: {

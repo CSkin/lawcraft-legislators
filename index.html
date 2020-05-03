@@ -12,18 +12,19 @@
     <main id='app' v-cloak>
       <div id='display' class='panel'>
         <display-row
-          v-for='(array, index) in legislatorData'
+          v-for='(array, index) in legisData'
           :row-index='index'
-          :row-array='array'
-          :key='index'
+          :legis-array='array'
+          :key='index + array.join()'
         ></display-row>
       </div>
       <div id='input' class='panel'>
         <input-row
-          v-for='(array, index) in legislatorData'
+          v-for='(array, index) in legisData'
           :row-index='index'
-          :row-array='array'
-          :key='index'
+          :legis-array='array'
+          :input-array='inputData[index]'
+          :key='index + array.join()'
         ></input-row>
       </div>
       <div id='output' class='panel'>

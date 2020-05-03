@@ -29,9 +29,19 @@ div {
   flex-direction: row;
 }
 
-#input > .row, #input > .section {
+.section {
+  display: flex;
+  flex-flow: row wrap;
+  width: 100px;
+}
+
+#input .row, #input .section {
   align-items: center;
   justify-content: center;
+}
+
+#input .section {
+  flex-direction: column;
 }
 
 .label {
@@ -39,12 +49,6 @@ div {
   width: 100px;
   align-items: center;
   justify-content: center;
-}
-
-.section {
-  display: flex;
-  flex-flow: row wrap;
-  width: 100px;
 }
 
 .seat {
