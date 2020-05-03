@@ -63,3 +63,21 @@ div {
 .green {
   color: green;
 }
+
+#generation-controls {
+  flex-direction: column;
+}
+
+#generation-controls > div {
+  border-style: none;
+}
+
+#generation-controls input {
+  width: 50px;
+}
+
+#generation-controls button {
+  font-size: 16px;
+  background-color: yellow;
+  border-radius: 5px;
+}

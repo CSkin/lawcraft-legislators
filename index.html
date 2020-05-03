@@ -25,6 +25,13 @@
           :row-data='row'
           :key='index'
         ></input-row>
+        <div id='generation-controls' class='row'>
+          <div>
+            <label>Chamber Size:</label>
+            <input type='number' v-model='chamberSize'></input>
+          </div>
+          <button @click='generateLegislators'>Generate</button>
+        </div>
       </div>
       <div id='output' class='panel'>
         Output

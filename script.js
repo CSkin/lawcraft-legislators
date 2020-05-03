@@ -109,7 +109,6 @@ var InputSection = {
   template:`
     <div class='section'>
       <input
-        class='number-field'
         type='number'
         min='0'
         max='4'
@@ -166,7 +165,8 @@ var InputRow = {
 var App = new Vue ({
   el: '#app',
   data: {
-    appData: appData
+    appData: appData,
+    chamberSize: 25
   },
   computed: {
     prop: function () {
@@ -174,8 +174,8 @@ var App = new Vue ({
     }
   },
   methods: {
-    method: function () {
-
+    generateLegislators: function () {
+      console.log('generating!');
     }
   },
   components: {
