@@ -18,6 +18,7 @@ p {
 
 input[type='number'] {
   font-size: 16px;
+  text-align: center;
 }
 
 table {
@@ -54,7 +55,11 @@ table {
   width: 100px;
   align-items: center;
   justify-content: center;
-  background-color: white;
+}
+
+.label span {
+  color: white;
+  font-weight: bold;
 }
 
 .seat {

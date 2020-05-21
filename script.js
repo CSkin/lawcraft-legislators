@@ -31,7 +31,7 @@ $( document ).ready( function () {
 
 var DisplayLabel = {
   template:`
-    <div class='label'>
+    <div class='label' :style='{ backgroundColor: labelColor }'>
       <span>{{ labelText }}</span>
     </div>
   `,
@@ -40,12 +40,20 @@ var DisplayLabel = {
       ['Cooperation', 'Competition'],
       ['Generosity', 'Cost Saving'],
       ['Equality', 'Liberty']
+    ],
+    colors: [
+      ['#cc6666', '#66cccc'],
+      ['#6666cc', '#cc9966'],
+      ['#cc6699', '#99cc66']
     ]};
   },
   props: ['row', 'labelIndex'],
   computed: {
     labelText: function () {
       return this.values[this.row][this.labelIndex];
+    },
+    labelColor: function () {
+      return this.colors[this.row][this.labelIndex];
     }
   }
 }
@@ -53,7 +61,8 @@ var DisplayLabel = {
 var DisplaySeat = {
   template:`
     <div class='seat'>
-      <span :class='{ green: occupied }'>{{ occupied }}</span>
+      <img class='legislator' src='legislator50.png' alt='legislator'
+        v-if='occupied'>
     </div>
   `,
   props: ['occupied']
@@ -61,7 +70,7 @@ var DisplaySeat = {
 
 var DisplaySection = {
   template:`
-    <div class='section'>
+    <div class='section' :style='{ backgroundColor: sectionColor }'>
       <display-seat
         v-for='(seat, index) in seatsArray'
         :occupied='seat'
@@ -69,7 +78,14 @@ var DisplaySection = {
       ></display-seat>
     </div>
   `,
-  props: ['section', 'legislators'],
+  data: function () { return {
+    colors: [
+      ['#bd7575', '#af8383', '#a09292', '#92a0a0', '#83afaf', '#75bdbd'],
+      ['#756dbd', '#8375af', '#927ca0', '#a08392', '#af8a83', '#bd9275'],
+      ['#c57592', '#bd838a', '#b69283', '#afa07c', '#a8af75', '#a0bd6d']
+    ]};
+  },
+  props: ['row', 'section', 'legislators'],
   computed: {
     seatsArray: function () {
       let seatsArray = [false, false, false, false];
@@ -86,6 +102,9 @@ var DisplaySection = {
         unassigned--;
       }
       return seatsArray;
+    },
+    sectionColor: function () {
+      return this.colors[this.row][this.section];
     }
   },
   components: {
@@ -99,6 +118,7 @@ var DisplayRow = {
       <display-label :row='row' :label-index='0'></display-label>
       <display-section
         v-for='section in rowData'
+        :row='row'
         :section='section.section'
         :legislators='section.legislators'
         :key='section.section'
