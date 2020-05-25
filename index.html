@@ -15,6 +15,7 @@
           v-for='(row, index) in appData'
           :row='index'
           :row-data='row'
+          :clause-data='issueSupport[index]'
           :key='index'
         ></display-row>
       </div>
@@ -35,14 +36,14 @@
             <button id='generate' @click='generateLegislators'>Generate</button>
           </p>
           <p>
-            <select name='issue-select' v-model='currentIssue'
-              :class='{ empty: currentIssue == "empty" }'
+            <select name='issue-select' v-model='issueIndex'
+              :class='{ empty: issueIndex == "empty" }'
             >
               <option value='empty' selected='true'>Load Empty Floor</option>
               <option v-for='(issue, index) in issues'
                 :value='index'
                 :key='index'
-              >{{ issue }}</option>
+              >{{ issue.name }}</option>
             </select>
             <button @click='loadIssue'>Load</button>
             <button @click='saveIssue'>Save</button>

@@ -28,31 +28,92 @@ function resetData () {
 }
 
 const issues = [
-  'School Support',
-  'Civic Engagement',
-  'Employment Aids',
-  'Business Innovation',
-  'Better Wages',
-  'Air & Water Quality',
-  'Natural Resources',
-  'Future of Energy',
-  'Drug Abuse',
-  'Prevent Terrorism',
-  'Justice Reform',
-  'Space Exploration',
-  'Food Safety',
-  'Healthcare',
-  'Social Services'
+  {
+    name: 'School Support',
+    support: ' RY  OLYUSMLAUAH Y'
+  },{
+    name: 'Civic Engagement',
+    support: '  MY S ULY MAYORH '
+  },{
+    name: 'Employment Aids',
+    support: ' YRLU LH    LARYHA'
+  },{
+    name: 'Business Innovation',
+    support: 'L U M SY A   LA HH'
+  },{
+    name: 'Better Wages',
+    support: 'O S M LLYUA LYU AH'
+  },{
+    name: 'Air & Water Quality',
+    support: 'SR  MMSAS  YL UUA '
+  },{
+    name: 'Natural Resources',
+    support: ' RYH YSHH AO UORHS'
+  },{
+    name: 'Future of Energy',
+    support: ' Y UHAHUMOA M YHH '
+  },{
+    name: 'Drug Abuse',
+    support: 'SAS MR LL O  YMASH'
+  },{
+    name: 'Prevent Terrorism',
+    support: '   Y UMLO O  SMRU '
+  },{
+    name: 'Justice Reform',
+    support: 'S U RY AL HY LM UL'
+  },{
+    name: 'Space Exploration',
+    support: 'A  H MY YO HY  HSY'
+  },{
+    name: 'Food Safety',
+    support: 'ALY ROUU  M LRSO  '
+  },{
+    name: 'Healthcare',
+    support: ' LRO  LY  ROML L A'
+  },{
+    name: 'Social Services',
+    support: 'YLAR  LOLHU  LLRUL'
+  }
 ];
 
 $( document ).ready( function () {
 
 // -------------------------{  Vue Components  }-------------------------
 
+var ClauseIcon = {
+  template:`
+    <div class='clause-icon' :style='{ backgroundColor: color }'>
+      {{ group }}
+    </div>
+  `,
+  props: ['group'],
+  computed: {
+    color: function () {
+      switch (this.group) {
+        case ' ': return '#cccccc80';
+        case 'Y': return '#fadb75';
+        case 'A': return '#f6c046';
+        case 'O': return '#ce9021';
+        case 'R': return '#e26b64';
+        case 'S': return '#bf334b';
+        case 'U': return '#89183b';
+        case 'L': return '#77b7dd';
+        case 'M': return '#5187bc';
+        case 'H': return '#33678b';
+      }
+    }
+  }
+}
+
 var DisplayLabel = {
   template:`
     <div class='label' :style='{ backgroundColor: labelColor }'>
       <label>{{ labelText }}</label>
+      <div class='icons-holder'>
+        <clause-icon :group='clauseData[0]'></clause-icon>
+        <clause-icon :group='clauseData[1]'></clause-icon>
+        <clause-icon :group='clauseData[2]'></clause-icon>
+      </div>
     </div>
   `,
   data: function () { return {
@@ -67,7 +128,7 @@ var DisplayLabel = {
       ['#cc6699', '#99cc66']
     ]};
   },
-  props: ['row', 'labelIndex'],
+  props: ['row', 'labelIndex', 'clauseData'],
   computed: {
     labelText: function () {
       return this.values[this.row][this.labelIndex];
@@ -75,6 +136,9 @@ var DisplayLabel = {
     labelColor: function () {
       return this.colors[this.row][this.labelIndex];
     }
+  },
+  components: {
+    'clause-icon': ClauseIcon
   }
 }
 
@@ -135,7 +199,11 @@ var DisplaySection = {
 var DisplayRow = {
   template: `
     <div class='row'>
-      <display-label :row='row' :label-index='0'></display-label>
+      <display-label
+        :row='row'
+        :label-index='0'
+        :clause-data='clauseData[0]'
+      ></display-label>
       <display-section
         v-for='section in rowData'
         :row='row'
@@ -143,10 +211,14 @@ var DisplayRow = {
         :legislators='section.legislators'
         :key='section.section'
       ></display-section>
-      <display-label :row='row' :label-index='1'></display-label>
+      <display-label
+        :row='row'
+        :label-index='1'
+        :clause-data='clauseData[1]'
+      ></display-label>
     </div>
   `,
-  props: ['row', 'rowData'],
+  props: ['row', 'rowData', 'clauseData'],
   components: {
     'display-label': DisplayLabel,
     'display-section': DisplaySection
@@ -212,7 +284,7 @@ var App = new Vue ({
     appData: resetData(),
     chamberSize: 25,
     issues: issues,
-    currentIssue: 'empty'
+    issueIndex: 'empty'
   },
   computed: {
     flatData: function () {
@@ -222,6 +294,21 @@ var App = new Vue ({
       return this.flatData
         .filter(section => !section.isUnlocked)
         .reduce((acc, cur) => acc + cur.legislators, 0);
+    },
+    issueName: function () {
+      if (this.issueIndex == 'empty') { return null };
+      return this.issues[this.issueIndex].name;
+    },
+    issueSupport: function () {
+      var s, a; // string, array
+      if (this.issueIndex == 'empty') { s = '                  ' }
+      else { s = this.issues[this.issueIndex].support };
+      a = s.split('');
+      return [
+        [[ a[0],  a[1],  a[2]  ],[ a[3],  a[4],  a[5]  ]],
+        [[ a[6],  a[7],  a[8]  ],[ a[9],  a[10], a[11] ]],
+        [[ a[12], a[13], a[14] ],[ a[15], a[16], a[17] ]]
+      ];
     }
   },
   methods: {
@@ -245,27 +332,27 @@ var App = new Vue ({
       console.log("Generated " + added + " legislators.");
     },
     loadIssue: function () {
-      if (this.currentIssue == 'empty') {
+      if (this.issueIndex == 'empty') {
         this.appData = resetData();
         console.log("Loaded empty floor");
       } else {
-        var key = 'issue' + this.currentIssue;
+        var key = 'issue' + this.issueIndex;
         if (localStorage.getItem(key)) {
           this.appData = JSON.parse(localStorage.getItem(key));
-          console.log("Loaded " + this.issues[this.currentIssue]);
+          console.log("Loaded " + this.issueName);
         } else {
-          console.log("No saved data for " + this.issues[this.currentIssue]);
+          console.log("No saved data for " + this.issueName);
         }
       }
     },
     saveIssue: function () {
-      if (this.currentIssue == 'empty') {
+      if (this.issueIndex == 'empty') {
         console.log("No issue selected");
       } else {
-        var key = 'issue' + this.currentIssue,
+        var key = 'issue' + this.issueIndex,
             value = JSON.stringify(this.appData);
         localStorage.setItem(key, value);
-        console.log("Saved " + this.issues[this.currentIssue]);
+        console.log("Saved " + this.issueName);
       }
     }
   },
