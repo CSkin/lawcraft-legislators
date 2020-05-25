@@ -35,7 +35,10 @@
             <button id='generate' @click='generateLegislators'>Generate</button>
           </p>
           <p>
-            <select name='issue-select' v-model='currentIssue'>
+            <select name='issue-select' v-model='currentIssue'
+              :class='{ empty: currentIssue == "empty" }'
+            >
+              <option value='empty' selected='true'>Load Empty Floor</option>
               <option v-for='(issue, index) in issues'
                 :value='index'
                 :key='index'

@@ -6,8 +6,6 @@ Array.prototype.random = function() {
 
 // ------------------------{  Data Preparation  }------------------------
 
-const appData = [];
-
 class Section {
   constructor(row, section, legislators, isUnlocked) {
     this.row = row;
@@ -17,12 +15,16 @@ class Section {
   }
 }
 
-for (let r = 0; r < 3; r++) {
-  var row = [];
-  for (let s = 0; s < 6; s++) {
-    row.push(new Section(r, s, 0, true));
+function resetData () {
+  const appData = [];
+  for (let r = 0; r < 3; r++) {
+    var row = [];
+    for (let s = 0; s < 6; s++) {
+      row.push(new Section(r, s, 0, true));
+    }
+    appData.push(row);
   }
-  appData.push(row);
+  return appData;
 }
 
 const issues = [
@@ -207,10 +209,10 @@ var InputRow = {
 var App = new Vue ({
   el: '#app',
   data: {
-    appData: appData,
+    appData: resetData(),
     chamberSize: 25,
     issues: issues,
-    currentIssue: null
+    currentIssue: 'empty'
   },
   computed: {
     flatData: function () {
@@ -243,10 +245,28 @@ var App = new Vue ({
       console.log("Generated " + added + " legislators.");
     },
     loadIssue: function () {
-      console.log("Loading " + this.issues[this.currentIssue]);
+      if (this.currentIssue == 'empty') {
+        this.appData = resetData();
+        console.log("Loaded empty floor");
+      } else {
+        var key = 'issue' + this.currentIssue;
+        if (localStorage.getItem(key)) {
+          this.appData = JSON.parse(localStorage.getItem(key));
+          console.log("Loaded " + this.issues[this.currentIssue]);
+        } else {
+          console.log("No saved data for " + this.issues[this.currentIssue]);
+        }
+      }
     },
     saveIssue: function () {
-      console.log("Saving " + this.issues[this.currentIssue]);
+      if (this.currentIssue == 'empty') {
+        console.log("No issue selected");
+      } else {
+        var key = 'issue' + this.currentIssue,
+            value = JSON.stringify(this.appData);
+        localStorage.setItem(key, value);
+        console.log("Saved " + this.issues[this.currentIssue]);
+      }
     }
   },
   components: {

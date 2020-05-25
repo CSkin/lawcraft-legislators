@@ -71,8 +71,11 @@ table {
   justify-content: center;
 }
 
-.green {
-  color: green;
+.empty {
+  color: gray;
+  background-color: white;
+  border-color: #a6a6a6;
+  font-style: italic;
 }
 
 .row:nth-child(2) {
