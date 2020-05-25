@@ -25,6 +25,24 @@ for (let r = 0; r < 3; r++) {
   appData.push(row);
 }
 
+const issues = [
+  'School Support',
+  'Civic Engagement',
+  'Employment Aids',
+  'Business Innovation',
+  'Better Wages',
+  'Air & Water Quality',
+  'Natural Resources',
+  'Future of Energy',
+  'Drug Abuse',
+  'Prevent Terrorism',
+  'Justice Reform',
+  'Space Exploration',
+  'Food Safety',
+  'Healthcare',
+  'Social Services'
+];
+
 $( document ).ready( function () {
 
 // -------------------------{  Vue Components  }-------------------------
@@ -32,7 +50,7 @@ $( document ).ready( function () {
 var DisplayLabel = {
   template:`
     <div class='label' :style='{ backgroundColor: labelColor }'>
-      <span>{{ labelText }}</span>
+      <label>{{ labelText }}</label>
     </div>
   `,
   data: function () { return {
@@ -190,7 +208,9 @@ var App = new Vue ({
   el: '#app',
   data: {
     appData: appData,
-    chamberSize: 25
+    chamberSize: 25,
+    issues: issues,
+    currentIssue: null
   },
   computed: {
     flatData: function () {
@@ -221,6 +241,12 @@ var App = new Vue ({
         toAdd--;
       }
       console.log("Generated " + added + " legislators.");
+    },
+    loadIssue: function () {
+      console.log("Loading " + this.issues[this.currentIssue]);
+    },
+    saveIssue: function () {
+      console.log("Saving " + this.issues[this.currentIssue]);
     }
   },
   components: {

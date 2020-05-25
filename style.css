@@ -57,7 +57,7 @@ table {
   justify-content: center;
 }
 
-.label span {
+.label label {
   color: white;
   font-weight: bold;
 }
@@ -94,18 +94,21 @@ table {
   flex-direction: column;
 }
 
-#generation-controls {
+#gen-ctrls {
   flex-direction: column;
 }
 
-#generation-controls input {
+#gen-ctrls input {
   width: 50px;
 }
 
-#generation-controls button {
+#gen-ctrls button, #gen-ctrls select {
   font-size: 16px;
-  background-color: yellow;
   border-radius: 5px;
+}
+
+#generate {
+  background-color: yellow;
 }
 
 #output {

@@ -25,14 +25,24 @@
           :row-data='row'
           :key='index'
         ></input-row>
-        <div id='generation-controls' class='row'>
+        <div id='gen-ctrls' class='row'>
           <p>
             <label>Chamber Size:</label>
             <input type='number' v-model='chamberSize'></input>
           </p>
           <p>Legislators Locked: {{ legislatorsLocked }}</p>
           <p>
-            <button @click='generateLegislators'>Generate</button>
+            <button id='generate' @click='generateLegislators'>Generate</button>
+          </p>
+          <p>
+            <select name='issue-select' v-model='currentIssue'>
+              <option v-for='(issue, index) in issues'
+                :value='index'
+                :key='index'
+              >{{ issue }}</option>
+            </select>
+            <button @click='loadIssue'>Load</button>
+            <button @click='saveIssue'>Save</button>
           </p>
         </div>
       </div>
